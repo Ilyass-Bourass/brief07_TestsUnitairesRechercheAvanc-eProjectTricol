@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="prof">
+        <createTable tableName="produit">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="reference" type="VARCHAR(50)" />
+            <column name="nom" type="VARCHAR(100)" />
+            <column name="description" type="VARCHAR(255)" />
+            <column name="prix_unitaire" type="DECIMAL(10,2)" />
+            <column name="categorie" type="VARCHAR(100)" />
+            <column name="stock_actuel" type="INT" />
+            <column name="stock_minimum" type="INT" />
+            <column name="unite_mesure" type="VARCHAR(20)" />
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

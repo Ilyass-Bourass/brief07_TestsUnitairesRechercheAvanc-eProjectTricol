@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="prof">
+        <createTable tableName="mouvement_stock">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="stock_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantite" type="INT"/>
+            <column name="type" type="ENUM('ENTREE','SORTIE')">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="date_mouvement" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="mouvement_stock"
+                baseColumnNames="stock_id"
+                referencedTableName="stock"
+                referencedColumnNames="id"
+                constraintName="fk_mouvement_stock"/>
+    </changeSet>
+
+</databaseChangeLog>

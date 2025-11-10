@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="prof">
+        <createTable tableName="stock">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="produit_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="numero_lot" type="VARCHAR(50)"/>
+            <column name="date_entree" type="TIMESTAMP"/>
+            <column name="quantite" type="INT"/>
+            <column name="prix_achat_unitaire" type="DECIMAL(10,2)"/>
+            <column name="commande_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="stock"
+                baseColumnNames="produit_id"
+                referencedTableName="produit"
+                referencedColumnNames="id"
+                constraintName="fk_stock_produit"/>
+
+        <addForeignKeyConstraint
+                baseTableName="stock"
+                baseColumnNames="commande_id"
+                referencedTableName="commande"
+                referencedColumnNames="id"
+                constraintName="fk_stock_commande"/>
+    </changeSet>
+
+</databaseChangeLog>
