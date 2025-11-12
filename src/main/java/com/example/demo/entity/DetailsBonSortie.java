@@ -3,6 +3,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+
 public class DetailsBonSortie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

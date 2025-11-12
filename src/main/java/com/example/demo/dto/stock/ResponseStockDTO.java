@@ -2,6 +2,7 @@ package com.example.demo.dto.stock;
 
 import com.example.demo.entity.enums.StatutCommande;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class ResponseStockDTO {
     private Long id;
