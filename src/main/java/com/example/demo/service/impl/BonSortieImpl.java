@@ -171,12 +171,14 @@ public class BonSortieImpl implements BonSortieService {
                     .orElseThrow(() -> new ResourceNotFoundException("Produit introuvable : " + responseStockDTO.getProduitId()));
 
             int quantiteStock = stock.getQuantite();
-
+            int quantiteMouvementStock;
             if (quantiteStock >= quantiteRestant) {
                 stock.setQuantite(quantiteStock - quantiteRestant);
                 produit.setStockActuel(produit.getStockActuel() - quantiteRestant);
+                quantiteMouvementStock=quantiteRestant;
                 quantiteRestant = 0;
             } else {
+                quantiteMouvementStock=stock.getQuantite();
                 stock.setQuantite(0);
                 produit.setStockActuel(produit.getStockActuel() - quantiteStock);
                 quantiteRestant -= quantiteStock;
@@ -186,6 +188,7 @@ public class BonSortieImpl implements BonSortieService {
 
             MouvementStock mouvementStock=stockVersMouvementStockMapper.stockVersMouvementStock(saved);
             mouvementStock.setTypeMouvement(TypeMouvement.SORTIE);
+            mouvementStock.setQuantite(quantiteMouvementStock);
             mouvementStockRepository.save(mouvementStock);
 
             produitRepository.save(produit);
