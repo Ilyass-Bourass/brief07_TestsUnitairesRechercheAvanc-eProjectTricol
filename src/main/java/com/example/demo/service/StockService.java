@@ -10,5 +10,7 @@ import java.util.List;
 public interface StockService {
     List<ResponseStockDTO> getAllStocks();
     List<ResponseStockDTO> getStocksByProduit(Long produitId);
+    double valorosiationStocksTotal();
+
 
 }

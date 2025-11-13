@@ -34,4 +34,9 @@ public class StockServiceImpl implements StockService {
                 .sorted(Comparator.comparing(ResponseStockDTO::getDateEntree)).
                 toList();
     }
+
+    @Override
+    public double valorosiationStocksTotal() {
+        return getAllStocks().stream().mapToDouble(stock->stock.getQuantite()*stock.getPrixAchatUnitaire()).sum();
+    }
 }

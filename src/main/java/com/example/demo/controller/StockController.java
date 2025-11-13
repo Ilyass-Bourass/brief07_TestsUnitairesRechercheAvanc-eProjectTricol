@@ -35,6 +35,11 @@ public class StockController {
         return new ResponseEntity<>(stoks, HttpStatus.OK);
     }
 
+    @GetMapping("/valorisation")
+    public ResponseEntity<Double> getAllStocks(){
+        return ResponseEntity.ok(stockService.valorosiationStocksTotal());
+    }
+
     @GetMapping("/mouvements")
     public ResponseEntity<List<ResponseMouvementStockDTO>> getAllMouvements(){
         List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock();
@@ -46,5 +51,6 @@ public class StockController {
         List<ResponseMouvementStockDTO> responseMouvementStockDTOS=mouvementStockService.getMouvementsStockByProduitId(id);
         return new ResponseEntity<>(responseMouvementStockDTOS, HttpStatus.OK);
     }
+
 
 }
