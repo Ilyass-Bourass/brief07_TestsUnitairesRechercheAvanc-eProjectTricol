@@ -183,4 +183,42 @@ public class TestMecanismeFifo {
          verify(mouvementStockRepository, never()).save(any(MouvementStock.class));
          verify(produitRepository, never()).save(any(Produit.class));
      }
+
+     @Test
+    void senario_quatre_consomation_exactement_stock(){
+
+        detailsBonSortie.setQuantite(100);
+        Stock lot01=Stock.builder().id(1L).produit(produit).quantite(60).build();
+        Stock lot02=Stock.builder().id(1L).produit(produit).quantite(40).build();
+
+        ResponseStockDTO responseStockDTO01=ResponseStockDTO.builder().id(1L).produitId(1L).build();
+        ResponseStockDTO responseStockDTO02=ResponseStockDTO.builder().id(2L).produitId(1L).build();
+
+         when(produitRepository.findById(1L)).thenReturn(Optional.of(produit));
+         when(stockRepository.findById(1L)).thenReturn(Optional.of(lot01));
+         when(stockRepository.findById(2L)).thenReturn(Optional.of(lot02));
+         when(stockRepository.save(any(Stock.class))).thenAnswer(invocation -> invocation.getArgument(0));
+         when(bonSortieRepository.findById(1L)).thenReturn(Optional.of(bonSortie));
+         when(stockService.getStocksByProduit(1L)).thenReturn(List.of(responseStockDTO01,responseStockDTO02));
+
+         MouvementStock mouvementStock01 = new MouvementStock();
+         when(stockVersMouvementStockMapper.stockVersMouvementStock(lot01))
+                 .thenReturn(mouvementStock01);
+         MouvementStock mouvementStock02 = new MouvementStock();
+         when(stockVersMouvementStockMapper.stockVersMouvementStock(lot02))
+                 .thenReturn(mouvementStock02);
+
+         String result  = bonSortieService.ValiderBonSortie(1L);
+
+         assertEquals(0,lot01.getQuantite(),"lot01 est épuisé");
+         assertEquals(0,lot02.getQuantite(),"lot02 est épuisé");
+         assertEquals(0,produit.getStockActuel(),"le stock actuel du produit est zéro");
+         assertEquals(TypeMouvement.SORTIE,mouvementStock01.getTypeMouvement());
+         assertEquals(TypeMouvement.SORTIE,mouvementStock02.getTypeMouvement());
+         assertTrue(result.contains("effuctué avec succée"));
+
+         verify(produitRepository,times(2)).save(any(Produit.class));
+         verify(stockRepository,times(2)).save(any(Stock.class));
+         verify(mouvementStockRepository,times(2)).save(any(MouvementStock.class));
+     }
 }
