@@ -5,6 +5,8 @@ import com.example.demo.dto.stock.ResponseStockDTO;
 import com.example.demo.entity.*;
 import com.example.demo.entity.enums.StatutBonSortie;
 import com.example.demo.entity.enums.TypeMouvement;
+import com.example.demo.exception.DuplicateResourceException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.StockVersMouvementStockMapper;
 import com.example.demo.repository.BonSortieRepository;
 import com.example.demo.repository.MouvementStockRepository;
@@ -24,8 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -133,12 +134,53 @@ public class TestMecanismeFifo {
          verify(mouvementStockRepository, times(2)).save(any(MouvementStock.class));
          verify(produitRepository, times(2)).save(any(Produit.class));
      }
-    /*
-     @Test
-     void senario_03_Sortie_avec_stock_insuffisant(){
-        Stock stock01=Stock.builder().id(1L).produit(produit).quantite(40).build();
 
+     @Test
+     void senario_03_Sortie_avec_stock_insuffisant_methode01(){
+
+        Stock lot=Stock.builder().id(1L).produit(produit).quantite(20).build();
+        ResponseStockDTO responseStockByProduitDTO=ResponseStockDTO.builder().id(1L).produitId(1L).build();
+
+         when(produitRepository.findById(1L)).thenReturn(Optional.of(produit));
+         when(stockRepository.findById(1L)).thenReturn(Optional.of(lot));
+         when(stockRepository.save(any(Stock.class))).thenReturn(lot);
+         when(bonSortieRepository.findById(1L)).thenReturn(Optional.of(bonSortie));
+         when(stockService.getStocksByProduit(1L)).thenReturn(List.of(responseStockByProduitDTO));
+
+         MouvementStock mouvementStock = new MouvementStock();
+         when(stockVersMouvementStockMapper.stockVersMouvementStock(any(Stock.class)))
+                 .thenReturn(mouvementStock);
+
+         assertThrows(ResourceNotFoundException.class, ()->{
+             bonSortieService.ValiderBonSortie(1L);
+         });
+         assertEquals(StatutBonSortie.BROULLION, bonSortie.getStatutBonSortie());
+
+         verify(bonSortieRepository,never()).save(any(BonSortie.class));
      }
 
-     */
+     @Test
+     void senario_03_Sortie_avec_stock_insuffisant_methode02(){
+
+         detailsBonSortie.setQuantite(200);
+         Stock lot = Stock.builder().id(1L).produit(produit).quantite(100).build();
+         ResponseStockDTO responseStockDTO = ResponseStockDTO.builder().id(1L).produitId(1L).build();
+
+         when(produitRepository.findById(1L)).thenReturn(Optional.of(produit));
+         when(bonSortieRepository.findById(1L)).thenReturn(Optional.of(bonSortie));
+
+         DuplicateResourceException exception = assertThrows(DuplicateResourceException.class, () -> {
+             bonSortieService.ValiderBonSortie(1L);
+         });
+         assertTrue(exception.getErrors().get(0).contains("stock actuel du produit de id : 1"));
+         assertTrue(exception.getErrors().get(0).contains("est : 100"));
+         assertTrue(exception.getErrors().get(0).contains("votre demande est : 200"));
+
+         assertEquals(StatutBonSortie.BROULLION, bonSortie.getStatutBonSortie());
+
+         verify(bonSortieRepository, never()).save(any(BonSortie.class));
+         verify(stockRepository, never()).save(any(Stock.class));
+         verify(mouvementStockRepository, never()).save(any(MouvementStock.class));
+         verify(produitRepository, never()).save(any(Produit.class));
+     }
 }
