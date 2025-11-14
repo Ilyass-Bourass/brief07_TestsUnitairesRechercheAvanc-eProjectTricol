@@ -3,15 +3,13 @@ import com.example.demo.dto.mouvemantStock.ResponseMouvementStockDTO;
 import com.example.demo.dto.stock.ResponseStockDTO;
 import com.example.demo.entity.MouvementStock;
 import com.example.demo.entity.Stock;
+import com.example.demo.entity.enums.TypeMouvement;
 import com.example.demo.service.MouvementStockService;
 import com.example.demo.service.impl.StockServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +39,8 @@ public class StockController {
     }
 
     @GetMapping("/mouvements")
-    public ResponseEntity<List<ResponseMouvementStockDTO>> getAllMouvements(){
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock();
+    public ResponseEntity<List<ResponseMouvementStockDTO>> sercheMouvementStock(@RequestParam (required = false) TypeMouvement type){
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
