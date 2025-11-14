@@ -4,9 +4,10 @@ import com.example.demo.dto.mouvemantStock.ResponseMouvementStockDTO;
 import com.example.demo.entity.MouvementStock;
 import com.example.demo.entity.enums.TypeMouvement;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MouvementStockService {
-    List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type);
-    List<ResponseMouvementStockDTO>getMouvementsStockByProduitId(Long produitId);
+    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end);
+        List<ResponseMouvementStockDTO>getMouvementsStockByProduitId(Long produitId);
 }

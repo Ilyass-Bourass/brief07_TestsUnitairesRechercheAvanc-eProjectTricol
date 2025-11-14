@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -19,15 +20,16 @@ public class MouvementStockimpl implements MouvementStockService {
     private final MouvementStockMapper mouvementStockMapper;
 
     @Override
-    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type) {
-        Specification<MouvementStock> sp=MouvementStockSpecification.hasType(type);
+    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end) {
+        Specification<MouvementStock> sp=MouvementStockSpecification.hasType(type).
+                                         and(MouvementStockSpecification.betweenDates(star,end));
         return mouvementStockRepository.findAll(sp).stream().map(mouvementStockMapper::toDto).toList();
 
     }
 
     @Override
     public List<ResponseMouvementStockDTO> getMouvementsStockByProduitId(Long produitId) {
-        return getMouvementsStock(null).stream().filter(Rms->Rms.getProduitId().equals(produitId)).toList();
+        return getMouvementsStock(null,null,null).stream().filter(Rms->Rms.getProduitId().equals(produitId)).toList();
     }
 
 }

@@ -51,4 +51,5 @@ public class Stock {
     @JoinColumn(name="produit_id", nullable=false)
     @NotNull(message = "le id du produit est obligatoire")
     private Produit produit;
+
 }

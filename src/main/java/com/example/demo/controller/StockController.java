@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +40,11 @@ public class StockController {
     }
 
     @GetMapping("/mouvements")
-    public ResponseEntity<List<ResponseMouvementStockDTO>> sercheMouvementStock(@RequestParam (required = false) TypeMouvement type){
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type);
+    public ResponseEntity<List<ResponseMouvementStockDTO>> sercheMouvementStock(
+            @RequestParam (required = false) TypeMouvement type,
+            @RequestParam (required = false)LocalDateTime start,
+            @RequestParam (required = false)LocalDateTime end){
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
