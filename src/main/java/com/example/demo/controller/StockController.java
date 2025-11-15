@@ -43,8 +43,9 @@ public class StockController {
     public ResponseEntity<List<ResponseMouvementStockDTO>> sercheMouvementStock(
             @RequestParam (required = false) TypeMouvement type,
             @RequestParam (required = false)LocalDateTime start,
-            @RequestParam (required = false)LocalDateTime end){
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end);
+            @RequestParam (required = false)LocalDateTime end,
+            @RequestParam (required = false) Long idProduit){
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end,idProduit);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 

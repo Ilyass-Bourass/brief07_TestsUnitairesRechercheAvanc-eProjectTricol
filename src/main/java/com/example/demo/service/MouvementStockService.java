@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MouvementStockService {
-    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end);
+    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end,Long idProduit);
         List<ResponseMouvementStockDTO>getMouvementsStockByProduitId(Long produitId);
 }

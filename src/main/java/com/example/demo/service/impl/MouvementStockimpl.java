@@ -20,16 +20,17 @@ public class MouvementStockimpl implements MouvementStockService {
     private final MouvementStockMapper mouvementStockMapper;
 
     @Override
-    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end) {
+    public List<ResponseMouvementStockDTO> getMouvementsStock(TypeMouvement type, LocalDateTime star, LocalDateTime end,Long idProduit) {
         Specification<MouvementStock> sp=MouvementStockSpecification.hasType(type).
-                                         and(MouvementStockSpecification.betweenDates(star,end));
+                                         and(MouvementStockSpecification.betweenDates(star,end)).
+                                         and(MouvementStockSpecification.hasProduitId(idProduit));
         return mouvementStockRepository.findAll(sp).stream().map(mouvementStockMapper::toDto).toList();
 
     }
 
     @Override
     public List<ResponseMouvementStockDTO> getMouvementsStockByProduitId(Long produitId) {
-        return getMouvementsStock(null,null,null).stream().filter(Rms->Rms.getProduitId().equals(produitId)).toList();
+        return getMouvementsStock(null,null,null,null).stream().filter(Rms->Rms.getProduitId().equals(produitId)).toList();
     }
 
 }

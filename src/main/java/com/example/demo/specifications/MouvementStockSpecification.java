@@ -4,7 +4,6 @@ import com.example.demo.entity.MouvementStock;
 import com.example.demo.entity.enums.TypeMouvement;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class MouvementStockSpecification {
@@ -19,4 +18,11 @@ public class MouvementStockSpecification {
             if(start != null) return cb.greaterThanOrEqualTo(root.get("dateMouvement"), start);
             return cb.lessThanOrEqualTo(root.get("dateMouvement"), end);
         };
-    }}
+    }
+
+    public static Specification<MouvementStock> hasProduitId(Long id) {
+        return (root, query, cb) -> id==null ? null : cb.equal(root.get("stock").get("produit").get("id"), id);
+    }
+
+
+}
