@@ -47,10 +47,12 @@ public class StockController {
                 @RequestParam (required = false) LocalDateTime dateDebut,
                 @RequestParam (required = false) LocalDateTime dateFin,
                 @RequestParam (required = false) Long idProduit,
-                @RequestParam (required = false) String numeroLot
-        )
+                @RequestParam (required = false) String numeroLot,
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size
+                )
     {
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,dateDebut,dateFin,idProduit,numeroLot);
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,dateDebut,dateFin,idProduit,numeroLot,page,size);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
