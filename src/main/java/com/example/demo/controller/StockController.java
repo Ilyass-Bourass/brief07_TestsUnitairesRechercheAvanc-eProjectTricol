@@ -40,12 +40,17 @@ public class StockController {
     }
 
     @GetMapping("/mouvements")
-    public ResponseEntity<List<ResponseMouvementStockDTO>> sercheMouvementStock(
-            @RequestParam (required = false) TypeMouvement type,
-            @RequestParam (required = false)LocalDateTime start,
-            @RequestParam (required = false)LocalDateTime end,
-            @RequestParam (required = false) Long idProduit){
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end,idProduit);
+    public ResponseEntity<List<ResponseMouvementStockDTO>>
+
+    sercheMouvementStock(
+                @RequestParam (required = false) TypeMouvement type,
+                @RequestParam (required = false)LocalDateTime start,
+                @RequestParam (required = false)LocalDateTime end,
+                @RequestParam (required = false) Long idProduit,
+                @RequestParam (required = false) String numeroLot
+        )
+    {
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end,idProduit,numeroLot);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
