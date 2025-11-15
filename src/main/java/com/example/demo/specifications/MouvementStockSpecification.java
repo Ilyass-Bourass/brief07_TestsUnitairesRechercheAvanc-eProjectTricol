@@ -25,7 +25,7 @@ public class MouvementStockSpecification {
     }
 
     public static Specification<MouvementStock> hasNumeroLot(String numeroLot) {
-        return (root,query, cb) -> cb.equal(root.get("stock").get("numeroLot"), numeroLot);
+        return (root,query, cb) -> numeroLot==null ? null : cb.equal(root.get("stock").get("numeroLot"), numeroLot);
     }
 
 

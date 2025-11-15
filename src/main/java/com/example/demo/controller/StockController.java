@@ -44,13 +44,13 @@ public class StockController {
 
     sercheMouvementStock(
                 @RequestParam (required = false) TypeMouvement type,
-                @RequestParam (required = false)LocalDateTime start,
-                @RequestParam (required = false)LocalDateTime end,
+                @RequestParam (required = false) LocalDateTime dateDebut,
+                @RequestParam (required = false) LocalDateTime dateFin,
                 @RequestParam (required = false) Long idProduit,
                 @RequestParam (required = false) String numeroLot
         )
     {
-        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,start,end,idProduit,numeroLot);
+        List<ResponseMouvementStockDTO> mouvementStocks=mouvementStockService.getMouvementsStock(type,dateDebut,dateFin,idProduit,numeroLot);
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
