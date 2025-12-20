@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="admin">
+        <createTable tableName="role_app">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="ENUM('ADMIN','RESPONSABLE_ACHATS','MAGASINIER','CHEF_ATELIER')">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="admin">
+        <createTable tableName="permission">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="libelle" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="module" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="admin">
+        <createTable tableName="user_app">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nom" type="VARCHAR(100)"/>
+            <column name="prenom" type="VARCHAR(100)"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="role_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="user_app"
+                baseColumnNames="role_id"
+                constraintName="fk_user_role"
+                referencedTableName="role_app"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="4" author="admin">
+        <createTable tableName="role_permission">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="role_permission"
+                       columnNames="role_id, permission_id"
+                       constraintName="pk_role_permission"/>
+
+        <addForeignKeyConstraint
+                baseTableName="role_permission"
+                baseColumnNames="role_id"
+                constraintName="fk_role_permission_role"
+                referencedTableName="role_app"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="role_permission"
+                baseColumnNames="permission_id"
+                constraintName="fk_role_permission_permission"
+                referencedTableName="permission"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5" author="admin">
+        <createTable tableName="user_permission">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_granted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_at" type="TIMESTAMP"/>
+            <column name="modified_by" type="VARCHAR(100)"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="user_permission"
+                baseColumnNames="user_id"
+                constraintName="fk_user_permission_user"
+                referencedTableName="user_app"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="user_permission"
+                baseColumnNames="permission_id"
+                constraintName="fk_user_permission_permission"
+                referencedTableName="permission"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

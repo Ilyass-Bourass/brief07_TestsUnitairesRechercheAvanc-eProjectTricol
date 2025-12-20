@@ -22,4 +22,6 @@
 
     <include file="db/changelog/bon-sortie-ligne-changelog.xml"/>
 
+    <include file="db/changelog/security-changelog.xml"/>
+
 </databaseChangeLog>
