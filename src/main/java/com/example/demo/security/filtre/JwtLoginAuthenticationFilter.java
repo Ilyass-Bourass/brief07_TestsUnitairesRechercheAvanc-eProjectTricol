@@ -3,6 +3,8 @@ package com.example.demo.security.filtre;
 
 
 import com.example.demo.dto.auth.LoginRequest;
+import com.example.demo.entity.UserApp;
+import com.example.demo.security.CustomUserDetails;
 import com.example.demo.security.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -53,16 +55,26 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
             FilterChain chain,
             Authentication authResult) throws IOException {
 
-        String email = authResult.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
+        UserApp userApp = userDetails.getUserApp();
+
+        String email = userApp.getEmail();
         String token = jwtUtil.generateToken(email);
+
+        String role = userApp.getRole() != null
+                ? userApp.getRole().getName().name()
+                : "NO_ROLE";
 
         response.setContentType("application/json");
         response.getWriter().write("""
-            {
-              "token": "%s"
-            }
-        """.formatted(token));
+        {
+          "token": "%s",
+          "email": "%s",
+          "role": "%s"
+        }
+    """.formatted(token, email, role));
     }
+
 
     @Override
     protected void unsuccessfulAuthentication(
