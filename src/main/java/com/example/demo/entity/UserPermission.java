@@ -34,6 +34,9 @@ public class UserPermission {
     private String modifiedBy;
 
     @PrePersist
+    protected void onCreate() {
+        isGranted = true;
+    }
     @PreUpdate
     protected void onModify() {
         modifiedAt = LocalDateTime.now();
