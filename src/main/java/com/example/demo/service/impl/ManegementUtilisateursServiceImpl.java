@@ -6,6 +6,7 @@ import com.example.demo.entity.UserApp;
 import com.example.demo.entity.UserPermission;
 import com.example.demo.entity.enums.RoleName;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.PermissionRepository;
 import com.example.demo.repository.RoleAppRepository;
 import com.example.demo.repository.UserAppRepository;
 import com.example.demo.repository.UserPermissionRepository;
@@ -14,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
@@ -28,6 +31,7 @@ public class ManegementUtilisateursServiceImpl implements ManagementUtilisateurs
     private final UserAppRepository userAppRepository;
     private final RoleAppRepository roleAppRepository;
     private final UserPermissionRepository userPermissionRepository;
+    private final PermissionRepository permissionRepository;
 
     @Transactional
     @Override
@@ -75,5 +79,32 @@ public class ManegementUtilisateursServiceImpl implements ManagementUtilisateurs
 
 
         return "Rôle " + roleUtilisateur + " assigné à l'utilisateur avec succès.";
+    }
+
+    @Override
+    public String assignerPermissionUtilisateur(Long idUtilisateur, String permission) {
+
+        UserApp userApp = userAppRepository.findById(idUtilisateur).orElseThrow(()-> new ResourceNotFoundException("Utilisateur non trouvé"));
+        Permission permissionOpt = permissionRepository.findByCode(permission).orElseThrow(()-> new ResourceNotFoundException("Permission non trouvée"));
+
+        boolean hasPermission = userApp.getUserPermissions().stream()
+                .anyMatch(up -> up.getPermission().getCode().equals(permission));
+
+        if (hasPermission) {
+            throw new IllegalStateException("L'utilisateur a déjà cette permission assignée.");
+        }
+
+            UserPermission userPermission = UserPermission.builder()
+                        .user(userApp)
+                        .permission(permissionOpt)
+                        .modifiedBy("admin")
+                        .modifiedAt(LocalDateTime.now())
+                        .build();
+            userPermissionRepository.save(userPermission);
+
+            userApp.getUserPermissions().add(userPermission);
+            userApp.setUpdatedAt(LocalDateTime.now());
+            userAppRepository.save(userApp);
+            return "Permission " + permission + " assignée à l'utilisateur avec succès.";
     }
 }
