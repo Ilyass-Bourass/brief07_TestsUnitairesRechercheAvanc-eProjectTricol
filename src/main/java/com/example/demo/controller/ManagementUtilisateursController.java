@@ -39,4 +39,14 @@ public class ManagementUtilisateursController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping("/supprimer-permission")
+    public ResponseEntity<String> removePermissionFromUser(@Valid @RequestBody AjouterOuSupprmierPermisionUser request) {
+        String result = managementUtilisateursService.supprimerPermissionUtilisateur(
+                request.getUserId(),
+                request.getPermission()
+        );
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
 }

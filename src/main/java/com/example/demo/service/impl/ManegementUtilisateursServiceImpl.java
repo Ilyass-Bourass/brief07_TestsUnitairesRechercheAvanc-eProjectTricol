@@ -82,6 +82,7 @@ public class ManegementUtilisateursServiceImpl implements ManagementUtilisateurs
     }
 
     @Override
+    @Transactional
     public String assignerPermissionUtilisateur(Long idUtilisateur, String permission) {
 
         UserApp userApp = userAppRepository.findById(idUtilisateur).orElseThrow(()-> new ResourceNotFoundException("Utilisateur non trouvé"));
@@ -107,4 +108,28 @@ public class ManegementUtilisateursServiceImpl implements ManagementUtilisateurs
             userAppRepository.save(userApp);
             return "Permission " + permission + " assignée à l'utilisateur avec succès.";
     }
+
+    @Override
+    @Transactional
+    public String supprimerPermissionUtilisateur(Long idUtilisateur, String permission) {
+
+        UserApp userApp = userAppRepository.findById(idUtilisateur)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
+        Permission permissionOpt = permissionRepository.findByCode(permission)
+                .orElseThrow(() -> new ResourceNotFoundException("Permission non trouvée"));
+
+        UserPermission userPermissionToDelete = userApp.getUserPermissions().stream()
+                .filter(up -> up.getPermission().getCode().equals(permission))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("L'utilisateur n'a pas cette permission."));
+
+        userPermissionRepository.delete(userPermissionToDelete);
+
+        userApp.getUserPermissions().remove(userPermissionToDelete);
+        userApp.setUpdatedAt(LocalDateTime.now());
+        userAppRepository.save(userApp);
+
+        return "Permission " + permission + " supprimée de l'utilisateur avec succès.";
+    }
+
 }
