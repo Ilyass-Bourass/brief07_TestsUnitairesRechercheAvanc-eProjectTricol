@@ -9,6 +9,7 @@ import com.example.demo.service.impl.StockServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,23 +23,27 @@ public class StockController {
     private final StockServiceImpl stockService;
     private final MouvementStockService mouvementStockService;
 
+    @PreAuthorize("hasAuthority('STOCK_READ')")
     @GetMapping
     public ResponseEntity<List<ResponseStockDTO>> getStock(){
         List<ResponseStockDTO> stocks = stockService.getAllStocks();
         return new ResponseEntity<>(stocks, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('STOCK_READ')")
     @GetMapping("produit/{id}")
     public ResponseEntity<List<ResponseStockDTO>> getStockByProduit(@PathVariable Long id){
         List<ResponseStockDTO> stoks=stockService.getStocksByProduit(id);
         return new ResponseEntity<>(stoks, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('STOCK_VALORISATION')")
     @GetMapping("/valorisation")
     public ResponseEntity<Double> getAllStocks(){
         return ResponseEntity.ok(stockService.valorosiationStocksTotal());
     }
 
+    @PreAuthorize("hasAuthority('STOCK_MOUVEMENT_READ')")
     @GetMapping("/mouvements")
     public ResponseEntity<List<ResponseMouvementStockDTO>>
 
@@ -56,6 +61,7 @@ public class StockController {
         return new ResponseEntity<>(mouvementStocks, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('STOCK_MOUVEMENT_READ')")
     @GetMapping("/mouvements/produit/{id}")
     public ResponseEntity<List<ResponseMouvementStockDTO>> getAllMouvementsByProduit(@PathVariable Long id){
         List<ResponseMouvementStockDTO> responseMouvementStockDTOS=mouvementStockService.getMouvementsStockByProduitId(id);

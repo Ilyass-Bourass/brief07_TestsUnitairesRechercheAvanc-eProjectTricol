@@ -10,7 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -26,8 +32,16 @@ public class JwtUtil {
     }
 
     public String generateToken(String email) {
+        return generateToken(email, Collections.emptySet());
+    }
+
+    public String generateToken(String email, Set<String> permissions) {
+        Claims claims = Jwts.claims().setSubject(email);
+        List<String> permsList = new ArrayList<>(permissions);
+        claims.put("permissions", permsList);
+
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -36,6 +50,23 @@ public class JwtUtil {
 
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractPermissions(String token) {
+        Object obj = getClaims(token).get("permissions");
+        if (obj instanceof List) {
+            return ((List<?>) obj).stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+        if (obj instanceof String) {
+            return Arrays.stream(((String) obj).split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

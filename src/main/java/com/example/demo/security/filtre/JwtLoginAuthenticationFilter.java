@@ -1,7 +1,5 @@
 package com.example.demo.security.filtre;
 
-
-
 import com.example.demo.dto.auth.LoginRequest;
 import com.example.demo.entity.UserApp;
 import com.example.demo.security.CustomUserDetails;
@@ -17,6 +15,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -59,20 +60,32 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
         UserApp userApp = userDetails.getUserApp();
 
         String email = userApp.getEmail();
-        String token = jwtUtil.generateToken(email);
+
+        Set<String> permissions = userApp.getUserPermissions() != null
+                ? userApp.getUserPermissions().stream()
+                .map(userPermission -> userPermission.getPermission().getCode())
+                .collect(Collectors.toSet())
+                : Collections.emptySet();
+
+        String token = jwtUtil.generateToken(email, permissions);
 
         String role = userApp.getRole() != null
                 ? userApp.getRole().getName().name()
                 : "NO_ROLE";
+
+        String permsJson = permissions.stream()
+                .map(p -> "\"" + p + "\"")
+                .collect(Collectors.joining(", "));
 
         response.setContentType("application/json");
         response.getWriter().write("""
         {
           "token": "%s",
           "email": "%s",
-          "role": "%s"
+          "role": "%s",
+          "permissions": [%s]
         }
-    """.formatted(token, email, role));
+        """.formatted(token, email, role, permsJson));
     }
 
 
@@ -89,10 +102,6 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
           "error": "Authentication failed",
           "message": "%s"
         }
-    """.formatted(failed.getMessage()));
+        """.formatted(failed.getMessage()));
     }
-
-
 }
-
-

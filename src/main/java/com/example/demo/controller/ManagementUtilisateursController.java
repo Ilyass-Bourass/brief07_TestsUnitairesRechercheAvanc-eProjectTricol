@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class ManagementUtilisateursController {
         return "Management Utilisateurs Endpoint is working!";
     }
 
+    @PreAuthorize("hasAuthority('ASSIGNER_ROLE')")
     @PostMapping
     public ResponseEntity<String> assignRoleToUser(@Valid @RequestBody AssignerRoleRequest assignerRoleRequest) {
         String reslt= managementUtilisateursService.assignerRoleUtilisateur(

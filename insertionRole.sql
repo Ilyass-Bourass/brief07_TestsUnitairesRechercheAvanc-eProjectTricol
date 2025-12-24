@@ -84,6 +84,15 @@ SELECT 2, p.id FROM permission p where p.id IN (2,6,9,10,11,12,13,14,15,17,18);
 INSERT IGNORE INTO role_permission (role_id, permission_id)
 SELECT 4, p.id FROM permission p where p.id IN (2,9,10,13,15,17);
 
+// Insertion de la permission pour le module admin
+INSERT INTO permission (code, libelle, description, module) VALUES
+    ('ASSIGNER_ROLE', 'Assigner un rôle', 'Autorise l\'assignation de rôles aux utilisateurs', 'management_utilisateurs');
+
+INSERT IGNORE INTO role_permission (role_id, permission_id)
+SELECT 1, p.id FROM permission p WHERE p.code = 'ASSIGNER_ROLE';
+
+INSERT IGNORE INTO user_permission (role_id, permission_id)
+SELECT 1, p.id FROM permission p;
 
 
 
