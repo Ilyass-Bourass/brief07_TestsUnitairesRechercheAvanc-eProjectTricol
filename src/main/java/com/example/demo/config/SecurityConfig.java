@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import com.example.demo.security.exception.JwtAccessDeniedHandler;
+import com.example.demo.security.exception.JwtAuthenticationEntryPoint;
 import com.example.demo.security.filtre.JwtAuthenticationFilter;
 import com.example.demo.security.filtre.JwtLoginAuthenticationFilter;
 import com.example.demo.security.jwt.JwtUtil;
@@ -23,6 +25,16 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
     @Bean
+    public JwtAuthenticationEntryPoint authenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public JwtAccessDeniedHandler accessDeniedHandler() {
+        return new JwtAccessDeniedHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         JwtLoginAuthenticationFilter loginFilter = new JwtLoginAuthenticationFilter(authenticationManager, jwtUtil);
         http
@@ -30,8 +42,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
+
                 ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
+                );
+
         return http.build();
     }
 
